@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Christina</string>
+    <string name="main_name">主页</string>
+    <string name="active_name">动态</string>
+    <string name="save_name">收藏</string>
+    <string name="cartoon_name">追番</string>
+    <string name="drawer_open">open</string>
+    <string name="drawer_close">close</string>
+</resources>
