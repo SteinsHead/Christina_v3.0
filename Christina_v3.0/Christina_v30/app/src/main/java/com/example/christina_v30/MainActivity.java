@@ -44,6 +44,8 @@ import java.util.List;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
+    private static final int main_user = 1;//设置MainActivity--UserCenter的RequestCode
+    private static final int main_search = 2;//设置MainActivity--SearchCenter的RequestCode
 
     private SearchView searchView;
     private Toolbar toolbar;
@@ -76,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         searchView.setQueryHint("please search here");
-        searchView.setIconifiedByDefault(false);
+        searchView.setIconifiedByDefault(true);
 
         arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1,
                 main_menu);
@@ -88,11 +90,20 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        searchView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //点击后跳转到新页面
+                Intent intent = new Intent(MainActivity.this, SearchCenter.class);
+                startActivityForResult(intent, main_search);
+            }
+        });
+
         main_image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, UserCenter.class);
-                startActivityForResult(intent, 1);
+                startActivityForResult(intent, main_user);
             }
         });
 
@@ -102,8 +113,6 @@ public class MainActivity extends AppCompatActivity {
 
         MyAdapter myAdapter = new MyAdapter(this, list);
         info_list.setAdapter(myAdapter);
-
-
 
     }
 
