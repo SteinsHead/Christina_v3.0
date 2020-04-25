@@ -12,3 +12,8 @@ this is a backup pack to reback my android code, bull shit Android Studio!!!!!!!
 此处修改的目录是layout下的card_layout，是将外层的布局文件修改了
 v1.02
 ***
+
+***
+第三次提交，将搜索界面做出来并且注册了Activity，还没加上其他的功能
+v1.03
+***
