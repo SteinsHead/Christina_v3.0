@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,9 +26,27 @@ public class LoginCenter extends AppCompatActivity {
 
         finds();
 
+
+
         login_image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String id = user_input.getText().toString();
+                System.out.println("hahahahahahahahahahahaha!!!!!!!!!!!" + id);
+
+                if(id.equals("christina") || id.equals("Christina")){
+                    Toast.makeText(LoginCenter.this, "欢迎回家，Administrator！", Toast.LENGTH_LONG).show();
+                }
+                else {
+                    Toast.makeText(LoginCenter.this, "welcome: "  + id + " !", Toast.LENGTH_LONG).show();
+                }
+
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
                 Intent intent = getIntent();
                 setResult(Activity.RESULT_OK, intent);
                 finish();

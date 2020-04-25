@@ -5,9 +5,11 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -36,6 +38,7 @@ public class SearchCenter extends AppCompatActivity {
     private TextView back_text;
     private ListView result_list;
     public List<Map<String, Object>> search_list = new ArrayList<Map<String, Object>>();
+    public List<Map<String, Object>> change_list = new ArrayList<Map<String, Object>>();
     private String search_url =
             "https://bangumi.bilibili.com/api/timeline_v2_global";
 
@@ -62,10 +65,39 @@ public class SearchCenter extends AppCompatActivity {
         MyAdapter myAdapter = new MyAdapter(SearchCenter.this, search_list);
         result_list.setAdapter(myAdapter);
 
-        
+        real_search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                change_list = result(newText);
+                MyAdapter resultAdapter = new MyAdapter(SearchCenter.this, change_list);
+                result_list.setAdapter(resultAdapter);
+                result_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        Toast.makeText(SearchCenter.this, "自己追的番就要好好看完哦",Toast.LENGTH_SHORT).show();
+                    }
+                });
+                return false;
+            }
+        });
     }
 
 
+    public List<Map<String, Object>> result(String newText){
+        List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+        for(Map<String, Object> ans: search_list){
+            if(ans.get("name_text").toString().contains(newText)){
+                System.out.println(ans.get("name_text"));
+                result.add(ans);
+            }
+        }
+        return result;
+    }
 
     public void find_views(){
         real_search = (SearchView) findViewById(R.id.real_search);
