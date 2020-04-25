@@ -59,8 +59,10 @@ public class SearchCenter extends AppCompatActivity {
         GetVideo getVideo = new GetVideo();
         getVideo.execute(search_url);
 
-        MyAdapter myAdapter = new MyAdapter(this, search_list);
+        MyAdapter myAdapter = new MyAdapter(SearchCenter.this, search_list);
         result_list.setAdapter(myAdapter);
+
+        
     }
 
 

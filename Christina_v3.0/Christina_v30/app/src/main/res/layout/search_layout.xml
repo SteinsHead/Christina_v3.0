@@ -10,15 +10,21 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <androidx.appcompat.widget.SearchView
+        <SearchView
             android:id="@+id/real_search"
-            android:layout_width="wrap_content"
+            android:layout_width="250dp"
             android:layout_height="40dp"
-            android:layout_margin="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="20dp"
+            app:iconifiedByDefault="false"
             android:background="@drawable/search_part"
-            app:iconifiedByDefault="false" >
+            android:iconifiedByDefault="false"
+            >
+        </SearchView>
+<!--            -->
 
-        </androidx.appcompat.widget.SearchView>
+
+
 
         <TextView
             android:id="@+id/back_text"
@@ -26,17 +32,18 @@
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:layout_weight="1"
-
+            android:textSize="26dp"
             android:gravity="center"
             android:text="取消"
+             />
 
-            android:textSize="30dp" />
     </LinearLayout>
 
     <ListView
         android:id="@+id/result_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:dividerHeight="5dp"
         />
 
 

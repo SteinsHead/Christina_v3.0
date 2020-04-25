@@ -47,11 +47,12 @@ public class MainActivity extends AppCompatActivity {
     private static final int main_user = 1;//设置MainActivity--UserCenter的RequestCode
     private static final int main_search = 2;//设置MainActivity--SearchCenter的RequestCode
 
-    private SearchView searchView;
+//    private SearchView searchView;
     private Toolbar toolbar;
     private ListView listView;
     private ImageView main_image, main_page_image, imageView;
     private DrawerLayout drawerLayout;
+    private ImageView search_image;
 
     private String[] main_menu = {"首页","历史记录","下载管理",
             "我的收藏","稍后再看","会员中心","联系客服","游戏中心"};
@@ -77,8 +78,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        searchView.setQueryHint("please search here");
-        searchView.setIconifiedByDefault(true);
+//        searchView.setQueryHint("please search here");
+//        searchView.setIconifiedByDefault(true);
 
         arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1,
                 main_menu);
@@ -90,10 +91,18 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        searchView.setOnClickListener(new View.OnClickListener() {
+//        searchView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                //点击后跳转到新页面
+//                Intent intent = new Intent(MainActivity.this, SearchCenter.class);
+//                startActivityForResult(intent, main_search);
+//            }
+//        });
+
+        search_image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //点击后跳转到新页面
                 Intent intent = new Intent(MainActivity.this, SearchCenter.class);
                 startActivityForResult(intent, main_search);
             }
@@ -117,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void find_views(){
-        searchView = (SearchView) findViewById(R.id.search_part);
+//        searchView = (SearchView) findViewById(R.id.search_part);
         drawerLayout = (DrawerLayout)findViewById(R.id.left_menu);
         listView = (ListView)findViewById(R.id.menu_list);
         toolbar = (Toolbar)findViewById(R.id.tl_custom);
@@ -125,6 +134,8 @@ public class MainActivity extends AppCompatActivity {
         main_page_image = (ImageView)findViewById(R.id.main_page_image);
         imageView = (ImageView)findViewById(R.id.imageView);
         info_list = (ListView)findViewById(R.id.info_list);
+        search_image = (ImageView) findViewById(R.id.search_image);
+
 
     }
 
