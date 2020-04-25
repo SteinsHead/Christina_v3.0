@@ -43,3 +43,5 @@ v1.07
 
 
 
+![](Encourage/wife.png)
+为了Alice，我要努力！！！
