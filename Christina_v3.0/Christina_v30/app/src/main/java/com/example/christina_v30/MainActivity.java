@@ -91,15 +91,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-//        searchView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                //点击后跳转到新页面
-//                Intent intent = new Intent(MainActivity.this, SearchCenter.class);
-//                startActivityForResult(intent, main_search);
-//            }
-//        });
-
         search_image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
