@@ -18,6 +18,7 @@ public class LoginCenter extends AppCompatActivity {
     private EditText user_input;
     private EditText password_input;
     private ImageView login_image;
+    private MyDatabaseHelper databaseHelper;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -26,11 +27,15 @@ public class LoginCenter extends AppCompatActivity {
 
         finds();
 
-
+        databaseHelper = new MyDatabaseHelper(LoginCenter.this, "UserInfo", null, 1);
 
         login_image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                databaseHelper.getWritableDatabase();
+
+
                 String id = user_input.getText().toString();
                 System.out.println("hahahahahahahahahahahaha!!!!!!!!!!!" + id);
 
