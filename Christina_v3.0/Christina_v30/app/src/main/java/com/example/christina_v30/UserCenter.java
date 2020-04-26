@@ -19,6 +19,7 @@ public class UserCenter extends AppCompatActivity {
     private Button active_button;
     private Button save_button;
     private Button cartoon_button;
+    private String user_temp;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -31,6 +32,9 @@ public class UserCenter extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = getIntent();
+                Bundle bundle = intent.getExtras();
+                bundle.putString("user", user_temp);
+                intent.putExtras(bundle);
                 setResult(Activity.RESULT_OK, intent);
                 finish();
             }
@@ -40,7 +44,9 @@ public class UserCenter extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(UserCenter.this, LoginCenter.class);
-                startActivityForResult(intent, 101);
+                Bundle bundle = new Bundle();
+                intent.putExtras(bundle);
+                startActivityForResult(intent, user_login);
             }
         });
 
@@ -50,6 +56,11 @@ public class UserCenter extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == user_login && resultCode == Activity.RESULT_OK){
+            Bundle bundle = data.getExtras();
+            user_temp = bundle.getString("user");
+
+        }
     }
 
     public void find_view(){

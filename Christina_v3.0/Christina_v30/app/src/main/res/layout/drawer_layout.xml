@@ -54,6 +54,13 @@
             app:civ_border_width="1dp"
             app:civ_border_color="@color/DarkGray" />
 
+        <TextView
+            android:id="@+id/user_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:text="暂时不知道是谁呢" />
+
         <ListView
             android:id="@+id/menu_list"
             android:layout_width="match_parent"

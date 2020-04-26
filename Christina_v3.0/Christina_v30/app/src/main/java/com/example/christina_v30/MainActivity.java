@@ -9,6 +9,7 @@ import androidx.appcompat.widget.SearchView;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -53,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageView main_image, main_page_image, imageView;
     private DrawerLayout drawerLayout;
     private ImageView search_image;
+    private TextView user_name;
 
     private String[] main_menu = {"首页","历史记录","下载管理",
             "我的收藏","稍后再看","会员中心","联系客服","游戏中心"};
@@ -103,6 +105,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, UserCenter.class);
+                Bundle bundle = new Bundle();
+                intent.putExtras(bundle);
                 startActivityForResult(intent, main_user);
             }
         });
@@ -117,7 +121,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void find_views(){
-//        searchView = (SearchView) findViewById(R.id.search_part);
         drawerLayout = (DrawerLayout)findViewById(R.id.left_menu);
         listView = (ListView)findViewById(R.id.menu_list);
         toolbar = (Toolbar)findViewById(R.id.tl_custom);
@@ -126,8 +129,7 @@ public class MainActivity extends AppCompatActivity {
         imageView = (ImageView)findViewById(R.id.imageView);
         info_list = (ListView)findViewById(R.id.info_list);
         search_image = (ImageView) findViewById(R.id.search_image);
-
-
+        user_name = (TextView) findViewById(R.id.user_name);
     }
 
     @Override
@@ -144,6 +146,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == main_user && resultCode == Activity.RESULT_OK){
+            Bundle bundle = data.getExtras();
+            user_name.setText(bundle.getString("user"));
+        }
     }
 
     //访问网络的内部类

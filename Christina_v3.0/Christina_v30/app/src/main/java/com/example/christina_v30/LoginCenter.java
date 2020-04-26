@@ -32,7 +32,7 @@ public class LoginCenter extends AppCompatActivity {
 
         finds();
 
-        databaseHelper = new MyDatabaseHelper(LoginCenter.this, "UserInfo", null, 1);
+        databaseHelper = new MyDatabaseHelper(LoginCenter.this, "UserInfo", null, 2);
 
         login_image.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -47,16 +47,29 @@ public class LoginCenter extends AppCompatActivity {
 
                 if(isExist(id, password)){ //若返回true说明用户名和密码都存在且正确，返回登录成功
                     Toast.makeText(LoginCenter.this, "登录成功！", Toast.LENGTH_SHORT).show();
+                    //在返回值中改变该用户的名字
+                    Intent intent = getIntent();
+                    Bundle bundle = intent.getExtras();
+                    bundle.putString("user", id);
+                    intent.putExtras(bundle);
+                    setResult(Activity.RESULT_OK, intent);
+                    finish();
                 }
                 else { //说明用户名不匹配或用户不存在，返回登录失败
                     Toast.makeText(LoginCenter.this, "用户不存在或输入错误！", Toast.LENGTH_SHORT).show();
+                    Intent intent = getIntent();
+                    Bundle bundle = intent.getExtras();
+                    bundle.putString("user", "暂时不知道是谁呢");
+                    intent.putExtras(bundle);
+                    setResult(Activity.RESULT_OK, intent);
+                    finish();
                 }
 
                 if(id.equals("christina") || id.equals("Christina")){
-                    Toast.makeText(LoginCenter.this, "欢迎回家，Administrator！", Toast.LENGTH_LONG).show();
+                    Toast.makeText(LoginCenter.this, "欢迎回家，Administrator！", Toast.LENGTH_SHORT).show();
                 }
                 else {
-                    Toast.makeText(LoginCenter.this, "welcome: "  + id + " !", Toast.LENGTH_LONG).show();
+                    Toast.makeText(LoginCenter.this, "welcome: "  + id + " !", Toast.LENGTH_SHORT).show();
                 }
 
                 try {
@@ -65,9 +78,7 @@ public class LoginCenter extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
-                Intent intent = getIntent();
-                setResult(Activity.RESULT_OK, intent);
-                finish();
+
             }
         });
 
