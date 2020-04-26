@@ -10,8 +10,10 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -65,6 +67,8 @@ public class MainActivity extends AppCompatActivity {
 
     public List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 
+    private MyDatabaseHelper databaseHelper;
+
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +77,8 @@ public class MainActivity extends AppCompatActivity {
 
         find_views();
 
+        databaseHelper = new MyDatabaseHelper(MainActivity.this, "UserInfo", null, 2);
+
         main_page_image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -80,8 +86,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-//        searchView.setQueryHint("please search here");
-//        searchView.setIconifiedByDefault(true);
 
         arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1,
                 main_menu);
@@ -97,6 +101,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, SearchCenter.class);
+                Bundle bundle = new Bundle();
+                intent.putExtras(bundle);
                 startActivityForResult(intent, main_search);
             }
         });
@@ -149,6 +155,22 @@ public class MainActivity extends AppCompatActivity {
         if(requestCode == main_user && resultCode == Activity.RESULT_OK){
             Bundle bundle = data.getExtras();
             user_name.setText(bundle.getString("user"));
+        }
+        else if(requestCode == main_search && resultCode == Activity.RESULT_OK){
+            Bundle bundle = data.getExtras();
+            if(!user_name.getText().toString().equals("暂时不知道是谁呢")){
+                //若名字已经更新，那么可以把数据放入数据库中
+                SQLiteDatabase db = databaseHelper.getWritableDatabase();
+                ContentValues values = new ContentValues();
+                values.put("username", user_name.getText().toString());
+                values.put("name", bundle.getString("name"));
+                values.put("cover", bundle.getString("cover"));
+                values.put("favorite", bundle.getString("favorite"));
+                values.put("play", bundle.getString("play"));
+                values.put("date", bundle.getString("date"));
+                db.insert("Video", null, values);
+                values.clear();
+            }
         }
     }
 

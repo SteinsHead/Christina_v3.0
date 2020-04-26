@@ -80,6 +80,16 @@ public class SearchCenter extends AppCompatActivity {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                         Toast.makeText(SearchCenter.this, "自己追的番就要好好看完哦",Toast.LENGTH_SHORT).show();
+                        Intent intent = getIntent();
+                        Bundle bundle = intent.getExtras();
+                        bundle.putString("name", change_list.get(position).get("name_text").toString());
+                        bundle.putString("favorite", change_list.get(position).get("favorite_text").toString());
+                        bundle.putString("cover", change_list.get(position).get("cover").toString());
+                        bundle.putString("play", change_list.get(position).get("play_text").toString());
+                        bundle.putString("date", change_list.get(position).get("update_text").toString());
+                        intent.putExtras(bundle);
+                        setResult(Activity.RESULT_OK, intent);
+                        finish();
                     }
                 });
                 return false;
