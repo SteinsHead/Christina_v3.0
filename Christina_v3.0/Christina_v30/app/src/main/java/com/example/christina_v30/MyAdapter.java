@@ -15,11 +15,11 @@ import java.util.Map;
 
 public class MyAdapter extends BaseAdapter {
 
-    private List<Map<String, Object>> data;
+    private List<Map<String, String>> data;
     private LayoutInflater layoutInflater;
     private Context context;
 
-    public MyAdapter(Context context, List<Map<String, Object>> data){
+    public MyAdapter(Context context, List<Map<String, String>> data){
 
         this.context = context;
         this.data = data;

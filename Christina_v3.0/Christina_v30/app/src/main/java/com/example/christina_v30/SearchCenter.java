@@ -37,8 +37,8 @@ public class SearchCenter extends AppCompatActivity {
     private SearchView real_search;
     private TextView back_text;
     private ListView result_list;
-    public List<Map<String, Object>> search_list = new ArrayList<Map<String, Object>>();
-    public List<Map<String, Object>> change_list = new ArrayList<Map<String, Object>>();
+    public List<Map<String, String>> search_list = new ArrayList<Map<String, String>>();
+    public List<Map<String, String>> change_list = new ArrayList<Map<String, String>>();
     private String search_url =
             "https://bangumi.bilibili.com/api/timeline_v2_global";
 
@@ -68,6 +68,7 @@ public class SearchCenter extends AppCompatActivity {
         real_search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+
                 return false;
             }
 
@@ -76,31 +77,36 @@ public class SearchCenter extends AppCompatActivity {
                 change_list = result(newText);
                 MyAdapter resultAdapter = new MyAdapter(SearchCenter.this, change_list);
                 result_list.setAdapter(resultAdapter);
-                result_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        Toast.makeText(SearchCenter.this, "自己追的番就要好好看完哦",Toast.LENGTH_SHORT).show();
-                        Intent intent = getIntent();
-                        Bundle bundle = intent.getExtras();
-                        bundle.putString("name", change_list.get(position).get("name_text").toString());
-                        bundle.putString("favorite", change_list.get(position).get("favorite_text").toString());
-                        bundle.putString("cover", change_list.get(position).get("cover").toString());
-                        bundle.putString("play", change_list.get(position).get("play_text").toString());
-                        bundle.putString("date", change_list.get(position).get("update_text").toString());
-                        intent.putExtras(bundle);
-                        setResult(Activity.RESULT_OK, intent);
-                        finish();
-                    }
-                });
+
                 return false;
             }
         });
+        result_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(SearchCenter.this, "自己追的番就要好好看完哦",Toast.LENGTH_SHORT).show();
+                Intent intent = getIntent();
+                System.out.println("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh" + change_list.get(position).get("name_text").toString());
+                Bundle bundle = intent.getExtras();
+                String[] str = new String[5];
+                str[0] = change_list.get(position).get("name_text").toString();
+                str[1] = change_list.get(position).get("favorite_text").toString();
+                str[2] = change_list.get(position).get("cover").toString();
+                str[3] = change_list.get(position).get("play_text").toString();
+                str[4] = change_list.get(position).get("update_text").toString();
+                bundle.putStringArray("video_info", str);
+                intent.putExtras(bundle);
+                setResult(Activity.RESULT_OK, intent);
+                finish();
+            }
+        });
+
     }
 
 
-    public List<Map<String, Object>> result(String newText){
-        List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
-        for(Map<String, Object> ans: search_list){
+    public List<Map<String, String>> result(String newText){
+        List<Map<String, String>> result = new ArrayList<Map<String, String>>();
+        for(Map<String, String> ans: search_list){
             if(ans.get("name_text").toString().contains(newText)){
                 System.out.println(ans.get("name_text"));
                 result.add(ans);
@@ -157,7 +163,7 @@ public class SearchCenter extends AppCompatActivity {
                     System.out.println(array.get(i));
                     JSONObject value = array.getJSONObject(i);
 
-                    Map<String, Object> map = new HashMap<String, Object>();
+                    Map<String, String> map = new HashMap<String, String>();
                     map.put("cover", value.getString("square_cover"));
                     map.put("name_text", value.getString("title"));
                     map.put("favourite_text", value.getString("favorites"));

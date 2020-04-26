@@ -24,6 +24,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.RecyclerView;
@@ -49,6 +50,7 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity {
     private static final int main_user = 1;//设置MainActivity--UserCenter的RequestCode
     private static final int main_search = 2;//设置MainActivity--SearchCenter的RequestCode
+    private static final int main_collect = 5;//设置MainActivity--CollectActivity的RequestCode
 
 //    private SearchView searchView;
     private Toolbar toolbar;
@@ -59,13 +61,13 @@ public class MainActivity extends AppCompatActivity {
     private TextView user_name;
 
     private String[] main_menu = {"首页","历史记录","下载管理",
-            "我的收藏","稍后再看","会员中心","联系客服","游戏中心"};
+            "我的收藏(可用)","稍后再看","会员中心","联系客服","游戏中心"};
     private ArrayAdapter arrayAdapter;
     private String url =
             "https://bangumi.bilibili.com/api/timeline_v2_global";
     private ListView info_list;
 
-    public List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+    public List<Map<String, String>> list = new ArrayList<Map<String, String>>();
 
     private MyDatabaseHelper databaseHelper;
 
@@ -93,7 +95,10 @@ public class MainActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+                if(position == 3){
+                    Intent intent = new Intent(MainActivity.this, CollectCenter.class);
+                    startActivityForResult(intent, main_collect);
+                }
             }
         });
 
@@ -112,6 +117,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, UserCenter.class);
                 Bundle bundle = new Bundle();
+                bundle.putString("user_name", user_name.getText().toString());
                 intent.putExtras(bundle);
                 startActivityForResult(intent, main_user);
             }
@@ -163,11 +169,11 @@ public class MainActivity extends AppCompatActivity {
                 SQLiteDatabase db = databaseHelper.getWritableDatabase();
                 ContentValues values = new ContentValues();
                 values.put("username", user_name.getText().toString());
-                values.put("name", bundle.getString("name"));
-                values.put("cover", bundle.getString("cover"));
-                values.put("favorite", bundle.getString("favorite"));
-                values.put("play", bundle.getString("play"));
-                values.put("date", bundle.getString("date"));
+                values.put("name", bundle.getStringArray("user_info")[0]);
+                values.put("favorite", bundle.getStringArray("user_info")[1]);
+                values.put("cover", bundle.getStringArray("user_info")[2]);
+                values.put("play", bundle.getStringArray("user_info")[3]);
+                values.put("date", bundle.getStringArray("user_info")[4]);
                 db.insert("Video", null, values);
                 values.clear();
             }
@@ -218,7 +224,7 @@ public class MainActivity extends AppCompatActivity {
                     System.out.println(array.get(i));
                     JSONObject value = array.getJSONObject(i);
 
-                    Map<String, Object> map = new HashMap<String, Object>();
+                    Map<String, String> map = new HashMap<String, String>();
                     map.put("cover", value.getString("square_cover"));
                     map.put("name_text", value.getString("title"));
                     map.put("favourite_text", value.getString("favorites"));

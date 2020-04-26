@@ -16,6 +16,7 @@
 
         android:usesCleartextTraffic="true"
         >
+        <activity android:name=".CollectCenter"></activity>
         <activity android:name=".SignUpCenter"></activity>
         <activity android:name=".SearchCenter"></activity>
         <activity android:name=".LoginCenter"></activity>
