@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
 
         find_views();
 
-        databaseHelper = new MyDatabaseHelper(MainActivity.this, "UserInfo", null, 2);
+        databaseHelper = new MyDatabaseHelper(MainActivity.this, "UserInfo", null, 3);
 
         main_page_image.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,6 +97,9 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if(position == 3){
                     Intent intent = new Intent(MainActivity.this, CollectCenter.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putString("user_name", user_name.getText().toString());
+                    intent.putExtras(bundle);
                     startActivityForResult(intent, main_collect);
                 }
             }
@@ -117,7 +120,6 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, UserCenter.class);
                 Bundle bundle = new Bundle();
-                bundle.putString("user_name", user_name.getText().toString());
                 intent.putExtras(bundle);
                 startActivityForResult(intent, main_user);
             }
@@ -162,18 +164,18 @@ public class MainActivity extends AppCompatActivity {
             Bundle bundle = data.getExtras();
             user_name.setText(bundle.getString("user"));
         }
-        else if(requestCode == main_search && resultCode == Activity.RESULT_OK){
+        if(requestCode == main_search && resultCode == Activity.RESULT_OK){
             Bundle bundle = data.getExtras();
             if(!user_name.getText().toString().equals("暂时不知道是谁呢")){
                 //若名字已经更新，那么可以把数据放入数据库中
                 SQLiteDatabase db = databaseHelper.getWritableDatabase();
                 ContentValues values = new ContentValues();
                 values.put("username", user_name.getText().toString());
-                values.put("name", bundle.getStringArray("user_info")[0]);
-                values.put("favorite", bundle.getStringArray("user_info")[1]);
-                values.put("cover", bundle.getStringArray("user_info")[2]);
-                values.put("play", bundle.getStringArray("user_info")[3]);
-                values.put("date", bundle.getStringArray("user_info")[4]);
+                values.put("name", bundle.getString("name"));
+                values.put("favorite", bundle.getString("favorite"));
+                values.put("cover", bundle.getString("cover"));
+                values.put("play", bundle.getString("play"));
+                values.put("date", bundle.getString("update"));
                 db.insert("Video", null, values);
                 values.clear();
             }

@@ -28,7 +28,7 @@ public class SignUpCenter extends AppCompatActivity {
 
         find_views();
 
-        databaseHelper = new MyDatabaseHelper(SignUpCenter.this, "UserInfo", null, 2);
+        databaseHelper = new MyDatabaseHelper(SignUpCenter.this, "UserInfo", null, 3);
 
 
         sign_back_image.setOnClickListener(new View.OnClickListener() {

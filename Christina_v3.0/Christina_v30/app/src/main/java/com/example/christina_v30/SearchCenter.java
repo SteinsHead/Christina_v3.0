@@ -88,13 +88,19 @@ public class SearchCenter extends AppCompatActivity {
                 Intent intent = getIntent();
                 System.out.println("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh" + change_list.get(position).get("name_text").toString());
                 Bundle bundle = intent.getExtras();
+                bundle.putString("name", change_list.get(position).get("name_text"));
+                bundle.putString("cover", change_list.get(position).get("cover"));
+                bundle.putString("favorite", change_list.get(position).get("favorite_text"));
+                bundle.putString("play", change_list.get(position).get("play_text"));
+                bundle.putString("update", change_list.get(position).get("update_text"));
+
                 String[] str = new String[5];
-                str[0] = change_list.get(position).get("name_text").toString();
-                str[1] = change_list.get(position).get("favorite_text").toString();
-                str[2] = change_list.get(position).get("cover").toString();
-                str[3] = change_list.get(position).get("play_text").toString();
-                str[4] = change_list.get(position).get("update_text").toString();
-                bundle.putStringArray("video_info", str);
+//                str[0] = change_list.get(position).get("name_text").toString();
+//                str[1] = change_list.get(position).get("favorite_text").toString();
+//                str[2] = change_list.get(position).get("cover").toString();
+//                str[3] = change_list.get(position).get("play_text").toString();
+//                str[4] = change_list.get(position).get("update_text").toString();
+//                bundle.putStringArray("video_info", str);
                 intent.putExtras(bundle);
                 setResult(Activity.RESULT_OK, intent);
                 finish();

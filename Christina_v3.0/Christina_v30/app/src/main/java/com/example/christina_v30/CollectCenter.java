@@ -30,7 +30,7 @@ public class CollectCenter extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.collect_layout);
 
-        databaseHelper = new MyDatabaseHelper(CollectCenter.this, "UserInfo", null, 2);
+        databaseHelper = new MyDatabaseHelper(CollectCenter.this, "UserInfo", null, 3);
 
         finds();
 
@@ -51,19 +51,23 @@ public class CollectCenter extends AppCompatActivity {
     public List<Map<String, String>> ShowList(){
         Intent intent = getIntent();
         String id = (String) intent.getStringExtra("user_name");
+        System.out.println("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh" + id);
         List<Map<String, String>> tmp = new ArrayList<Map<String, String>>();
         SQLiteDatabase db = databaseHelper.getWritableDatabase();
         Cursor cursor = db.query("Video", null, null, null, null, null, null);
         if(cursor.moveToFirst()){
             do{
                 if(cursor.getString(cursor.getColumnIndex("username")).equals(id)){
+                    System.out.println("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh");
                     Map<String, String> ans = new HashMap<String, String>();
                     ans.put("cover", cursor.getString(cursor.getColumnIndex("cover")));
+                    System.out.println(cursor.getString(cursor.getColumnIndex("cover")));
                     ans.put("name_text", cursor.getString(cursor.getColumnIndex("name")));
+                    System.out.println(cursor.getString(cursor.getColumnIndex("name")));
                     ans.put("favorite_text", cursor.getString(cursor.getColumnIndex("favorite")));
                     ans.put("play_text", cursor.getString(cursor.getColumnIndex("play")));
                     ans.put("update_text", cursor.getString(cursor.getColumnIndex("date")));
-
+                    tmp.add(ans);
                 }
             }while (cursor.moveToNext());
         }

@@ -32,7 +32,7 @@ public class LoginCenter extends AppCompatActivity {
 
         finds();
 
-        databaseHelper = new MyDatabaseHelper(LoginCenter.this, "UserInfo", null, 2);
+        databaseHelper = new MyDatabaseHelper(LoginCenter.this, "UserInfo", null, 3);
 
         login_image.setOnClickListener(new View.OnClickListener() {
             @Override

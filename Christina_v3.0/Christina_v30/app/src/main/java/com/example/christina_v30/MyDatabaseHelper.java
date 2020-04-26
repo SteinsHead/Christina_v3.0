@@ -18,7 +18,8 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
             + "cover Text,"
             + "favorite Text,"
             + "play Text,"
-            + "date Text)";
+            + "date Text,"
+            + "primary key (username, name))";
     private Context mycontext;
 
     public MyDatabaseHelper(@Nullable Context context, @Nullable String name, @Nullable SQLiteDatabase.CursorFactory factory, int version) {
