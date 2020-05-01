@@ -62,20 +62,6 @@ public class MainActivity extends AppCompatActivity {
     private static final int main_search = 2;//设置MainActivity--SearchCenter的RequestCode
     private static final int main_collect = 5;//设置MainActivity--CollectActivity的RequestCode
 
-    private static String[] PERMISSION_STORAGE = {
-            Manifest.permission.INTERNET,
-            Manifest.permission.RECORD_AUDIO,
-            Manifest.permission.ACCESS_NETWORK_STATE,
-            Manifest.permission.ACCESS_WIFI_STATE,
-            Manifest.permission.CHANGE_NETWORK_STATE,
-            Manifest.permission.READ_PHONE_STATE,
-            Manifest.permission.READ_CONTACTS,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.ACCESS_FINE_LOCATION
-    };
-    private static int REQUEST_PERMISSION_CODE = 101;
-
 //    private SearchView searchView;
     private Toolbar toolbar;
     private ListView listView;
@@ -102,26 +88,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         find_views();
-
-        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP){
-            if(ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED){
-                ActivityCompat.requestPermissions(this, PERMISSION_STORAGE, REQUEST_PERMISSION_CODE);
-            }
-        }
-
-        //test
-        head_text.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                initSpeech(MainActivity.this);
-            }
-        });
-
-        //
-        // 将“12345678”替换成您申请的APPID，申请地址：http://www.xfyun.cn
-// 请勿在“=”与appid之间添加任何空字符或者转义符
-        SpeechUtility.createUtility(MainActivity.this, SpeechConstant.APPID +"=5e75b878");
-        //
 
         databaseHelper = new MyDatabaseHelper(MainActivity.this, "UserInfo", null, 3);
 
@@ -285,75 +251,6 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if(requestCode == 1001){
-            for(int i = 0; i < permissions.length; i++){
-            }
-        }
-    }
-
-    /**
-     * 初始化语音识别
-     */
-    public void initSpeech(final Context context) {
-        //1.创建RecognizerDialog对象
-        RecognizerDialog mDialog = new RecognizerDialog(context, null);
-        //2.设置accent、language等参数
-        mDialog.setParameter(SpeechConstant.LANGUAGE, "zh_cn");
-        mDialog.setParameter(SpeechConstant.ACCENT, "mandarin");
-        //3.设置回调接口
-        mDialog.setListener(new RecognizerDialogListener() {
-            @Override
-            public void onResult(RecognizerResult recognizerResult, boolean isLast) {
-                if (!isLast) {
-                    //解析语音
-                    //返回的result为识别后的汉字,直接赋值到TextView上即可
-                    String result = parseVoice(recognizerResult.getResultString());
-                    head_text.setText(result);
-                }
-            }
-
-            @Override
-            public void onError(SpeechError speechError) {
-
-            }
-        });
-        //4.显示dialog，接收语音输入
-        mDialog.show();
-    }
-
-    /**
-     * 解析语音json
-     */
-    public String parseVoice(String resultString) {
-        Gson gson = new Gson();
-        Voice voiceBean = gson.fromJson(resultString, Voice.class);
-
-        StringBuffer sb = new StringBuffer();
-        ArrayList<Voice.WSBean> ws = voiceBean.ws;
-        for (Voice.WSBean wsBean : ws) {
-            String word = wsBean.cw.get(0).w;
-            sb.append(word);
-        }
-        return sb.toString();
-    }
-    /**
-     * 语音对象封装
-     */
-    public class Voice {
-
-        public ArrayList<WSBean> ws;
-
-        public class WSBean {
-            public ArrayList<CWBean> cw;
-        }
-
-        public class CWBean {
-            public String w;
         }
     }
 }

@@ -19,25 +19,41 @@
             app:iconifiedByDefault="false"
             android:background="@drawable/search_part"
             android:iconifiedByDefault="false"
-            >
-        </SearchView>
+            />
+
+
+<!--        <EditText-->
+<!--            android:id="@+id/real_search"-->
+<!--            android:layout_width="250dp"-->
+<!--            android:layout_height="40dp"-->
+<!--            android:layout_marginTop="5dp"-->
+<!--            android:layout_marginLeft="20dp"-->
+<!--            android:layout_weight="1"-->
+<!--            android:ems="10"-->
+<!--            android:inputType="text"-->
+<!--            android:background="@drawable/search_part" />-->
+
+        <ImageView
+            android:id="@+id/voice_image"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="5dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_settings_voice_black_24dp" />
+
+        <TextView
+                android:id="@+id/back_text"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textSize="20dp"
+                android:text="取消" />
 <!--            -->
 
 
-
-
-        <TextView
-            android:id="@+id/back_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:layout_weight="1"
-            android:textSize="26dp"
-            android:gravity="center"
-            android:text="取消"
-             />
-
-    </LinearLayout>
+</LinearLayout>
 
     <ListView
         android:id="@+id/result_list"
