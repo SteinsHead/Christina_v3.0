@@ -30,6 +30,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.iflytek.cloud.SpeechConstant;
+import com.iflytek.cloud.SpeechUtility;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -78,6 +80,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         find_views();
+
+        //
+        // 将“12345678”替换成您申请的APPID，申请地址：http://www.xfyun.cn
+// 请勿在“=”与appid之间添加任何空字符或者转义符
+        SpeechUtility.createUtility(MainActivity.this, SpeechConstant.APPID +"=5e75b878");
+        //
 
         databaseHelper = new MyDatabaseHelper(MainActivity.this, "UserInfo", null, 3);
 
