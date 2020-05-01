@@ -6,13 +6,16 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
+import androidx.core.app.ActivityCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -30,8 +33,13 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.gson.Gson;
+import com.iflytek.cloud.RecognizerResult;
 import com.iflytek.cloud.SpeechConstant;
+import com.iflytek.cloud.SpeechError;
 import com.iflytek.cloud.SpeechUtility;
+import com.iflytek.cloud.ui.RecognizerDialog;
+import com.iflytek.cloud.ui.RecognizerDialogListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -54,13 +62,27 @@ public class MainActivity extends AppCompatActivity {
     private static final int main_search = 2;//设置MainActivity--SearchCenter的RequestCode
     private static final int main_collect = 5;//设置MainActivity--CollectActivity的RequestCode
 
+    private static String[] PERMISSION_STORAGE = {
+            Manifest.permission.INTERNET,
+            Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.ACCESS_NETWORK_STATE,
+            Manifest.permission.ACCESS_WIFI_STATE,
+            Manifest.permission.CHANGE_NETWORK_STATE,
+            Manifest.permission.READ_PHONE_STATE,
+            Manifest.permission.READ_CONTACTS,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.ACCESS_FINE_LOCATION
+    };
+    private static int REQUEST_PERMISSION_CODE = 101;
+
 //    private SearchView searchView;
     private Toolbar toolbar;
     private ListView listView;
     private ImageView main_image, main_page_image, imageView;
     private DrawerLayout drawerLayout;
     private ImageView search_image;
-    private TextView user_name;
+    private TextView user_name, head_text;
 
     private String[] main_menu = {"首页","历史记录","下载管理",
             "我的收藏(可用)","稍后再看","会员中心","联系客服","游戏中心"};
@@ -80,6 +102,20 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         find_views();
+
+        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP){
+            if(ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED){
+                ActivityCompat.requestPermissions(this, PERMISSION_STORAGE, REQUEST_PERMISSION_CODE);
+            }
+        }
+
+        //test
+        head_text.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                initSpeech(MainActivity.this);
+            }
+        });
 
         //
         // 将“12345678”替换成您申请的APPID，申请地址：http://www.xfyun.cn
@@ -152,6 +188,7 @@ public class MainActivity extends AppCompatActivity {
         info_list = (ListView)findViewById(R.id.info_list);
         search_image = (ImageView) findViewById(R.id.search_image);
         user_name = (TextView) findViewById(R.id.user_name);
+        head_text = (TextView) findViewById(R.id.head_text);
     }
 
     @Override
@@ -251,4 +288,72 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if(requestCode == 1001){
+            for(int i = 0; i < permissions.length; i++){
+            }
+        }
+    }
+
+    /**
+     * 初始化语音识别
+     */
+    public void initSpeech(final Context context) {
+        //1.创建RecognizerDialog对象
+        RecognizerDialog mDialog = new RecognizerDialog(context, null);
+        //2.设置accent、language等参数
+        mDialog.setParameter(SpeechConstant.LANGUAGE, "zh_cn");
+        mDialog.setParameter(SpeechConstant.ACCENT, "mandarin");
+        //3.设置回调接口
+        mDialog.setListener(new RecognizerDialogListener() {
+            @Override
+            public void onResult(RecognizerResult recognizerResult, boolean isLast) {
+                if (!isLast) {
+                    //解析语音
+                    //返回的result为识别后的汉字,直接赋值到TextView上即可
+                    String result = parseVoice(recognizerResult.getResultString());
+                    head_text.setText(result);
+                }
+            }
+
+            @Override
+            public void onError(SpeechError speechError) {
+
+            }
+        });
+        //4.显示dialog，接收语音输入
+        mDialog.show();
+    }
+
+    /**
+     * 解析语音json
+     */
+    public String parseVoice(String resultString) {
+        Gson gson = new Gson();
+        Voice voiceBean = gson.fromJson(resultString, Voice.class);
+
+        StringBuffer sb = new StringBuffer();
+        ArrayList<Voice.WSBean> ws = voiceBean.ws;
+        for (Voice.WSBean wsBean : ws) {
+            String word = wsBean.cw.get(0).w;
+            sb.append(word);
+        }
+        return sb.toString();
+    }
+    /**
+     * 语音对象封装
+     */
+    public class Voice {
+
+        public ArrayList<WSBean> ws;
+
+        public class WSBean {
+            public ArrayList<CWBean> cw;
+        }
+
+        public class CWBean {
+            public String w;
+        }
+    }
 }
