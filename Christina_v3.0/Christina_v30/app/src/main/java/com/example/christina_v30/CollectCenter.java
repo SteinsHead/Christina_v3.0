@@ -1,10 +1,16 @@
 package com.example.christina_v30;
 
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.content.SearchRecentSuggestionsProvider;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -12,6 +18,7 @@ import android.widget.ListView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,6 +30,11 @@ public class CollectCenter extends AppCompatActivity {
     private ListView collect_list;
     private MyDatabaseHelper databaseHelper;
     public List<Map<String, String>> list = new ArrayList<Map<String, String>>();
+    private NotificationManager manager;
+    private Notification notification;
+    Bitmap bitmap = null;
+    private String default_name = "Christina";
+    private String notify_name;
 
 
     @Override
@@ -46,6 +58,30 @@ public class CollectCenter extends AppCompatActivity {
                 finish();
             }
         });
+
+        manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.wife2);
+
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            String id = "my_channel_01";
+            String name = "渠道名字";
+            NotificationChannel channel = new NotificationChannel(id, name, NotificationManager.IMPORTANCE_DEFAULT);
+            manager.createNotificationChannel(channel);
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(CollectCenter.this, id);
+            builder.setContentTitle("Christina")
+                    .setContentText("你订阅的番剧 " +  notify_name +  " 更新了")
+                    .setSubText("请尽快收看")
+                    .setTicker("收到Christina发来的消息")
+                    .setWhen(System.currentTimeMillis())
+                    .setSmallIcon(R.drawable.wife2)
+                    .setLargeIcon(bitmap)
+                    .setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE)
+                    .setDefaults(Notification.DEFAULT_SOUND)
+                    .setAutoCancel(true);
+            notification = builder.build();
+            manager.notify(1, notification);
+        }
     }
 
     public List<Map<String, String>> ShowList(){
@@ -64,6 +100,9 @@ public class CollectCenter extends AppCompatActivity {
                     System.out.println(cursor.getString(cursor.getColumnIndex("cover")));
                     ans.put("name_text", cursor.getString(cursor.getColumnIndex("name")));
                     System.out.println(cursor.getString(cursor.getColumnIndex("name")));
+
+                    notify_name = cursor.getString(cursor.getColumnIndex("name"));
+
                     ans.put("favorite_text", cursor.getString(cursor.getColumnIndex("favorite")));
                     ans.put("play_text", cursor.getString(cursor.getColumnIndex("play")));
                     ans.put("update_text", cursor.getString(cursor.getColumnIndex("date")));
