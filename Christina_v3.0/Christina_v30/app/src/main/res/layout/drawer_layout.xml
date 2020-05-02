@@ -29,8 +29,9 @@
             android:id="@+id/info_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:dividerHeight="5dp" />
+            android:divider="@null"
+            android:dividerHeight="10dp"
+            android:layout_weight="1" />
 
 
     </LinearLayout>
@@ -65,6 +66,7 @@
             android:id="@+id/menu_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="#ffffff"
             android:padding="10dp" />
     </LinearLayout>
 

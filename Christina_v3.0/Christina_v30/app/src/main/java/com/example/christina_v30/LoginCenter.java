@@ -5,7 +5,14 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.media.Image;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -15,14 +22,16 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.io.File;
+
 public class LoginCenter extends AppCompatActivity {
     private static final int login_sign = 4;//设置MainActivity--SearchCenter的RequestCode
 
-
     private TextView main_title;
     private EditText user_input, password_input;
-    private ImageView login_image, sign_up_image;
+    private ImageView login_image, sign_up_image, set_image;
     private MyDatabaseHelper databaseHelper;
+    private ImageUtils imageUtils;
 
 
     @Override
@@ -47,6 +56,8 @@ public class LoginCenter extends AppCompatActivity {
 
                 if(isExist(id, password)){ //若返回true说明用户名和密码都存在且正确，返回登录成功
                     Toast.makeText(LoginCenter.this, "登录成功！", Toast.LENGTH_SHORT).show();
+                    //登陆成功的情况下可以选取图片
+
                     //在返回值中改变该用户的名字
                     Intent intent = getIntent();
                     Bundle bundle = intent.getExtras();
@@ -90,10 +101,34 @@ public class LoginCenter extends AppCompatActivity {
             }
         });
 
+        set_image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //添加逻辑
+                imageUtils.ByAlbum();
+            }
+        });
+
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if(requestCode == ImageUtils.ALBUM_REQUEST_CODE){
+            try {
+                if(requestCode == -1){
+                    Bitmap bitmap = imageUtils.decodeBitmap();
+                    if(bitmap != null){
+                        set_image.setImageBitmap(bitmap);
+                    }
+                }else {
+                    if(imageUtils.ImageFile != null){
+                        imageUtils.ImageFile.delete();
+                    }
+                }
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+        }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
@@ -103,6 +138,7 @@ public class LoginCenter extends AppCompatActivity {
         password_input = (EditText) findViewById(R.id.password_input);
         login_image = (ImageView) findViewById(R.id.login_image);
         sign_up_image = (ImageView) findViewById(R.id.sign_up_image);
+        set_image = (ImageView) findViewById(R.id.set_image);
     }
 
     public boolean isExist(String id, String password){

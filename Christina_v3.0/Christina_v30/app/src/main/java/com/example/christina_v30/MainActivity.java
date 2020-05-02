@@ -115,6 +115,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        info_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(MainActivity.this, "感兴趣的话就加入收藏夹吧！",Toast.LENGTH_SHORT).show();
+            }
+        });
+
         search_image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
