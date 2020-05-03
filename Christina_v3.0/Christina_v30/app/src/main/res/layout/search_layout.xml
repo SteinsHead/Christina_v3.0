@@ -8,7 +8,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:alpha="0.8">
 
         <SearchView
             android:id="@+id/real_search"
@@ -59,6 +60,7 @@
         android:id="@+id/result_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_margin="10dp"
         android:divider="@null"
         android:dividerHeight="10dp"
         />

@@ -19,16 +19,18 @@
 
         <ImageView
             android:id="@+id/imageView"
-            android:layout_width="300dp"
+            android:layout_width="200dp"
             android:layout_height="300dp"
             android:layout_gravity="center"
+            android:layout_margin="10dp"
             android:src="@drawable/wife"
             android:layout_weight="1" />
 
         <ListView
             android:id="@+id/info_list"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="600dp"
+            android:layout_margin="10dp"
             android:divider="@null"
             android:dividerHeight="10dp"
             android:layout_weight="1" />
