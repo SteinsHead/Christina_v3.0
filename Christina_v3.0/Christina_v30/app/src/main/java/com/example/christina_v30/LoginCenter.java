@@ -12,6 +12,7 @@ import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.FileUtils;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.EditText;
@@ -31,7 +32,14 @@ public class LoginCenter extends AppCompatActivity {
     private EditText user_input, password_input;
     private ImageView login_image, sign_up_image, set_image;
     private MyDatabaseHelper databaseHelper;
-    private ImageUtils imageUtils;
+
+    //
+    private static final int ALBUM_REQUEST_CODE = 455;
+    private static final int RESULT_REQUEST_CODE = 889;
+    private static int output_X = 300;
+    private static int output_Y = 300;
+    private Bitmap photo;
+    //
 
 
     @Override
@@ -105,7 +113,7 @@ public class LoginCenter extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //添加逻辑
-                imageUtils.ByAlbum();
+                FromAlbum();
             }
         });
 
@@ -113,23 +121,49 @@ public class LoginCenter extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if(requestCode == ImageUtils.ALBUM_REQUEST_CODE){
-            try {
-                if(requestCode == -1){
-                    Bitmap bitmap = imageUtils.decodeBitmap();
-                    if(bitmap != null){
-                        set_image.setImageBitmap(bitmap);
-                    }
-                }else {
-                    if(imageUtils.ImageFile != null){
-                        imageUtils.ImageFile.delete();
-                    }
+        if(requestCode == RESULT_CANCELED){
+            Toast.makeText(this, "cancelled", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        switch (requestCode){
+            case ALBUM_REQUEST_CODE:
+                cropPhoto(data.getData());
+                break;
+            case RESULT_REQUEST_CODE:
+                if(data != null){
+                    setImage(data);
                 }
-            } catch (Exception e){
-                e.printStackTrace();
-            }
+                break;
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    public void cropPhoto(Uri uri){
+        Intent intent = new Intent("com.android.camera.action.CROP");
+        intent.setDataAndType(uri, "image/*");
+        intent.putExtra("crop", "true");
+        // 裁剪框的比例，1：1
+        intent.putExtra("aspectX", 1);
+        intent.putExtra("aspectY", 1);
+        // 裁剪后输出图片的尺寸大小
+        intent.putExtra("outputX", 250);
+        intent.putExtra("outputY", 250);
+        // 图片格式
+        intent.putExtra("outputFormat", "JPEG");
+        intent.putExtra("noFaceDetection", true);// 取消人脸识别
+        intent.putExtra("return-data", true);
+
+        startActivityForResult(intent, RESULT_REQUEST_CODE);
+    }
+
+    public void setImage(Intent intent){
+        Bundle bundle = intent.getExtras();
+        if(bundle != null){
+            photo = bundle.getParcelable("data");
+            Drawable drawable = new BitmapDrawable(null, photo);
+
+            set_image.setImageBitmap(photo);
+        }
     }
 
     public void finds(){
@@ -155,5 +189,11 @@ public class LoginCenter extends AppCompatActivity {
         }
         cursor.close();
         return false;
+    }
+
+    private void FromAlbum(){
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("image/*");
+        startActivityForResult(intent, ALBUM_REQUEST_CODE);
     }
 }
