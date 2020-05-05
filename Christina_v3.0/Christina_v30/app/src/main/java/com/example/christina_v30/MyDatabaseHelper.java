@@ -11,7 +11,9 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     private static final String CREATE_USER = "create table User ("
             + "username Text,"
             + "password Text,"
-            + "rank Text)";
+            + "headimage Text,"
+            + "rank Text,"
+            + "primary key (username, password, headimage))";
     private static final String CREATE_VIDEO = "create table Video ("
             + "username Text,"
             + "name Text,"

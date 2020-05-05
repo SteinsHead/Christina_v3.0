@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.Image;
@@ -23,7 +24,12 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
+
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 
 public class LoginCenter extends AppCompatActivity {
     private static final int login_sign = 4;//设置MainActivity--SearchCenter的RequestCode
@@ -41,6 +47,8 @@ public class LoginCenter extends AppCompatActivity {
     private Bitmap photo;
     //
 
+    private String id;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -49,7 +57,20 @@ public class LoginCenter extends AppCompatActivity {
 
         finds();
 
-        databaseHelper = new MyDatabaseHelper(LoginCenter.this, "UserInfo", null, 3);
+        databaseHelper = new MyDatabaseHelper(LoginCenter.this, "UserInfo", null, 4);
+
+        main_title.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //在返回值中改变该用户的名字
+                Intent intent = getIntent();
+                Bundle bundle = intent.getExtras();
+                bundle.putString("user", id);
+                intent.putExtras(bundle);
+                setResult(Activity.RESULT_OK, intent);
+                finish();
+            }
+        });
 
         login_image.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,22 +78,35 @@ public class LoginCenter extends AppCompatActivity {
 
                 databaseHelper.getWritableDatabase();
 
-                String id = user_input.getText().toString();
+                id = user_input.getText().toString();
                 String password = password_input.getText().toString();
                 System.out.println("hahahahahahahahahahahaha!!!!!!!!!!!" + id);
                 System.out.println("hahahahahahahahahahahaha!!!!!!!!!!!" + password);
 
                 if(isExist(id, password)){ //若返回true说明用户名和密码都存在且正确，返回登录成功
                     Toast.makeText(LoginCenter.this, "登录成功！", Toast.LENGTH_SHORT).show();
-                    //登陆成功的情况下可以选取图片
 
-                    //在返回值中改变该用户的名字
-                    Intent intent = getIntent();
-                    Bundle bundle = intent.getExtras();
-                    bundle.putString("user", id);
-                    intent.putExtras(bundle);
-                    setResult(Activity.RESULT_OK, intent);
-                    finish();
+                    //登录成功的情况下可以显示头像
+                    SQLiteDatabase db = databaseHelper.getWritableDatabase();
+                    Cursor cursor = db.query("User", null, null, null, null, null, null);
+                    if(cursor.moveToFirst()){
+                        do{
+                            if(cursor.getString(cursor.getColumnIndex("username")).equals(id)){
+                                Glide.with(LoginCenter.this).load(cursor.getString(cursor.getColumnIndex("headimage"))).into(set_image);
+                                System.out.println("iamgeaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" + cursor.getString(cursor.getColumnIndex("headimage")));
+                            }
+                        }while (cursor.moveToNext());
+                    }
+                    cursor.close();
+                    //登陆成功的情况下可以更改头像
+                    set_image.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            //添加逻辑
+                            FromAlbum();
+                        }
+                    });
+
                 }
                 else { //说明用户名不匹配或用户不存在，返回登录失败
                     Toast.makeText(LoginCenter.this, "用户不存在或输入错误！", Toast.LENGTH_SHORT).show();
@@ -109,13 +143,31 @@ public class LoginCenter extends AppCompatActivity {
             }
         });
 
-        set_image.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //添加逻辑
-                FromAlbum();
+        Intent intent = getIntent();
+        final String name = (String) intent.getStringExtra("user_name");
+        if(!name.equals("暂时不知道是谁呢")){
+            SQLiteDatabase db = databaseHelper.getWritableDatabase();
+            Cursor cursor = db.query("User", null, null, null, null, null, null);
+            if(cursor.moveToFirst()){
+                do{
+                    if(cursor.getString(cursor.getColumnIndex("username")).equals(name)){
+                        Glide.with(LoginCenter.this).load(cursor.getString(cursor.getColumnIndex("headimage"))).into(set_image);
+                        System.out.println("iamgeaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" + cursor.getString(cursor.getColumnIndex("headimage")));
+                    }
+                }while (cursor.moveToNext());
             }
-        });
+            cursor.close();
+        }
+
+
+
+//        try {
+//            FileInputStream fileInputStream = new FileInputStream("/storage/emulated/0/wife.png");
+//            Bitmap bitmap = BitmapFactory.decodeStream(fileInputStream);
+//            set_image.setImageBitmap(bitmap);
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        };
 
     }
 
@@ -131,7 +183,7 @@ public class LoginCenter extends AppCompatActivity {
                 break;
             case RESULT_REQUEST_CODE:
                 if(data != null){
-                    setImage(data);
+                    setImage(data, id);
                 }
                 break;
         }
@@ -156,13 +208,26 @@ public class LoginCenter extends AppCompatActivity {
         startActivityForResult(intent, RESULT_REQUEST_CODE);
     }
 
-    public void setImage(Intent intent){
+    public void setImage(Intent intent, String id){
         Bundle bundle = intent.getExtras();
         if(bundle != null){
             photo = bundle.getParcelable("data");
-            Drawable drawable = new BitmapDrawable(null, photo);
-
             set_image.setImageBitmap(photo);
+            //添加逻辑
+            try {
+                File dir = new File(getExternalFilesDir(null).getAbsolutePath());
+                String filepath = dir + String.valueOf(System.currentTimeMillis()) + ".png";
+                File file = new File(filepath);
+                FileOutputStream outputStream = new FileOutputStream(file);
+                photo.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+                outputStream.flush();
+                outputStream.close();
+                SQLiteDatabase db = databaseHelper.getWritableDatabase();
+                db.execSQL("update User set headimage=? where username=?", new Object[]{filepath, id});
+                db.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 

@@ -42,7 +42,7 @@ public class CollectCenter extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.collect_layout);
 
-        databaseHelper = new MyDatabaseHelper(CollectCenter.this, "UserInfo", null, 3);
+        databaseHelper = new MyDatabaseHelper(CollectCenter.this, "UserInfo", null, 4);
 
         finds();
 

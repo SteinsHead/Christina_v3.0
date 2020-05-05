@@ -16,10 +16,15 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.SystemClock;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -46,6 +51,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -89,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
 
         find_views();
 
-        databaseHelper = new MyDatabaseHelper(MainActivity.this, "UserInfo", null, 3);
+        databaseHelper = new MyDatabaseHelper(MainActivity.this, "UserInfo", null, 4);
 
         main_page_image.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -137,6 +145,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, UserCenter.class);
                 Bundle bundle = new Bundle();
+                bundle.putString("user_name", user_name.getText().toString());
                 intent.putExtras(bundle);
                 startActivityForResult(intent, main_user);
             }
@@ -181,6 +190,19 @@ public class MainActivity extends AppCompatActivity {
         if(requestCode == main_user && resultCode == Activity.RESULT_OK){
             Bundle bundle = data.getExtras();
             user_name.setText(bundle.getString("user"));
+            //登录成功的情况下可以显示头像
+            SQLiteDatabase db = databaseHelper.getWritableDatabase();
+            Cursor cursor = db.query("User", null, null, null, null, null, null);
+            if(cursor.moveToFirst()){
+                do{
+                    if(cursor.getString(cursor.getColumnIndex("username")).equals(bundle.getString("user"))){
+                        Glide.with(MainActivity.this).load(cursor.getString(cursor.getColumnIndex("headimage"))).into(main_image);
+                        Glide.with(MainActivity.this).load(cursor.getString(cursor.getColumnIndex("headimage"))).into(main_page_image);
+                        System.out.println("iamgeaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" + cursor.getString(cursor.getColumnIndex("headimage")));
+                    }
+                }while (cursor.moveToNext());
+            }
+            cursor.close();
         }
         if(requestCode == main_search && resultCode == Activity.RESULT_OK){
             Bundle bundle = data.getExtras();
@@ -240,6 +262,14 @@ public class MainActivity extends AppCompatActivity {
 
                 JSONObject test = array.getJSONObject(0);
                 Glide.with(MainActivity.this).load(test.getString("square_cover")).into(imageView);
+
+
+
+                File file = new File(getExternalFilesDir(null).getAbsolutePath(), "/wife.png");
+                System.out.println(getExternalFilesDir(null).getAbsolutePath());
+//                File file = new File(Environment.getExternalStorageDirectory(), "wife.png");
+                Glide.with(MainActivity.this).load(file).into(imageView);
+
                 for(int i = 0; i < array.length(); i++){
                     System.out.println(array.get(i));
                     JSONObject value = array.getJSONObject(i);
