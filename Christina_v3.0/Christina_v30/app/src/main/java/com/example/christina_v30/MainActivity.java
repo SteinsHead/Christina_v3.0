@@ -213,6 +213,7 @@ public class MainActivity extends AppCompatActivity {
                 values.put("username", user_name.getText().toString());
                 values.put("name", bundle.getString("name"));
                 values.put("favorite", bundle.getString("favorite"));
+                System.out.println(bundle.getString("favorite"));
                 values.put("cover", bundle.getString("cover"));
                 values.put("play", bundle.getString("play"));
                 values.put("date", bundle.getString("update"));
@@ -263,13 +264,6 @@ public class MainActivity extends AppCompatActivity {
                 JSONObject test = array.getJSONObject(0);
                 Glide.with(MainActivity.this).load(test.getString("square_cover")).into(imageView);
 
-
-
-                File file = new File(getExternalFilesDir(null).getAbsolutePath(), "/wife.png");
-                System.out.println(getExternalFilesDir(null).getAbsolutePath());
-//                File file = new File(Environment.getExternalStorageDirectory(), "wife.png");
-                Glide.with(MainActivity.this).load(file).into(imageView);
-
                 for(int i = 0; i < array.length(); i++){
                     System.out.println(array.get(i));
                     JSONObject value = array.getJSONObject(i);
@@ -278,8 +272,8 @@ public class MainActivity extends AppCompatActivity {
                     map.put("cover", value.getString("square_cover"));
                     map.put("name_text", value.getString("title"));
                     map.put("favourite_text", value.getString("favorites"));
-                    map.put("play_text", value.getString("play_count"));
-                    map.put("update_text", value.getString("weekday"));
+                    map.put("play_text", value.getString("season_id"));
+                    map.put("update_text", value.getString("lastupdate_at"));
 
                     list.add(map);
                 }

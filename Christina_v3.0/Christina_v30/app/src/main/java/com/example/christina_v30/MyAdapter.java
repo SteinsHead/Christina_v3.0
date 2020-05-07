@@ -76,6 +76,8 @@ public class MyAdapter extends BaseAdapter {
                 .get("name_text"));
         info.favourite_text_detail.setText((String) data.get(position)
                 .get("favourite_text"));
+        System.out.println((String) data.get(position)
+                .get("favourite_text"));
         info.play_text_detail.setText((String) data.get(position)
                 .get("play_text"));
         info.update_text_detail.setText((String) data.get(position)

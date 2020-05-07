@@ -140,18 +140,16 @@ public class SearchCenter extends AppCompatActivity {
                 System.out.println("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh" + change_list.get(position).get("name_text").toString());
                 Bundle bundle = intent.getExtras();
                 bundle.putString("name", change_list.get(position).get("name_text"));
+                System.out.println(change_list.get(position).get("name_text"));
                 bundle.putString("cover", change_list.get(position).get("cover"));
-                bundle.putString("favorite", change_list.get(position).get("favorite_text"));
+                System.out.println(change_list.get(position).get("cover"));
+                bundle.putString("favorite", change_list.get(position).get("favourite_text"));
+                System.out.println(change_list.get(position).get("favourite_text"));
                 bundle.putString("play", change_list.get(position).get("play_text"));
+                System.out.println(change_list.get(position).get("play_text"));
                 bundle.putString("update", change_list.get(position).get("update_text"));
+                System.out.println(change_list.get(position).get("update_text"));
 
-                String[] str = new String[5];
-//                str[0] = change_list.get(position).get("name_text").toString();
-//                str[1] = change_list.get(position).get("favorite_text").toString();
-//                str[2] = change_list.get(position).get("cover").toString();
-//                str[3] = change_list.get(position).get("play_text").toString();
-//                str[4] = change_list.get(position).get("update_text").toString();
-//                bundle.putStringArray("video_info", str);
                 intent.putExtras(bundle);
                 setResult(Activity.RESULT_OK, intent);
                 finish();
@@ -217,7 +215,6 @@ public class SearchCenter extends AppCompatActivity {
             try {
                 JSONObject object = new JSONObject(s);
                 JSONArray array = (JSONArray) object.get("result");
-                JSONObject test = array.getJSONObject(0);
                 for(int i = 0; i < array.length(); i++){
                     System.out.println(array.get(i));
                     JSONObject value = array.getJSONObject(i);
@@ -226,8 +223,9 @@ public class SearchCenter extends AppCompatActivity {
                     map.put("cover", value.getString("square_cover"));
                     map.put("name_text", value.getString("title"));
                     map.put("favourite_text", value.getString("favorites"));
-                    map.put("play_text", value.getString("play_count"));
-                    map.put("update_text", value.getString("weekday"));
+                    System.out.println(value.getString("favorites"));
+                    map.put("play_text", value.getString("season_id"));
+                    map.put("update_text", value.getString("lastupdate_at"));
 
                     search_list.add(map);
                 }
@@ -270,23 +268,6 @@ public class SearchCenter extends AppCompatActivity {
                     change_list = result(result);
                     MyAdapter resultAdapter = new MyAdapter(SearchCenter.this, change_list);
                     result_list.setAdapter(resultAdapter);
-//                    real_search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-//                        @Override
-//                        public boolean onQueryTextSubmit(String query) {
-//
-//                            return false;
-//                        }
-//
-//                        @Override
-//                        public boolean onQueryTextChange(String newText) {
-//                            newText = result;
-//                            change_list = result(newText);
-//                            MyAdapter resultAdapter = new MyAdapter(SearchCenter.this, change_list);
-//                            result_list.setAdapter(resultAdapter);
-//
-//                            return false;
-//                        }
-//                    });
                 }
             }
 

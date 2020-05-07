@@ -20,10 +20,14 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 public class CollectCenter extends AppCompatActivity {
     private ImageView collect_back_image, collect_image;
@@ -63,25 +67,42 @@ public class CollectCenter extends AppCompatActivity {
         bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.wife2);
 
 
+        System.out.println(getTime());
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-            String id = "my_channel_01";
-            String name = "渠道名字";
-            NotificationChannel channel = new NotificationChannel(id, name, NotificationManager.IMPORTANCE_DEFAULT);
-            manager.createNotificationChannel(channel);
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(CollectCenter.this, id);
-            builder.setContentTitle("Christina")
-                    .setContentText("你订阅的番剧 " +  notify_name +  " 更新了")
-                    .setSubText("请尽快收看")
-                    .setTicker("收到Christina发来的消息")
-                    .setWhen(System.currentTimeMillis())
-                    .setSmallIcon(R.drawable.wife2)
-                    .setLargeIcon(bitmap)
-                    .setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE)
-                    .setDefaults(Notification.DEFAULT_SOUND)
-                    .setAutoCancel(true);
-            notification = builder.build();
-            manager.notify(1, notification);
+            for(Map<String, String> map : list){
+                String temp = map.get("update_text").substring(0, 10);
+                System.out.println(map.get("favourite_text"));
+                System.out.println(temp);
+                if(temp.equals(getTime())){
+                    String id = "my_channel_01";
+                    String name = "渠道名字";
+                    NotificationChannel channel = new NotificationChannel(id, name, NotificationManager.IMPORTANCE_DEFAULT);
+                    manager.createNotificationChannel(channel);
+                    NotificationCompat.Builder builder = new NotificationCompat.Builder(CollectCenter.this, id);
+                    builder.setContentTitle("Christina")
+                            .setContentText("你订阅的番剧 " +  notify_name +  " 更新了")
+                            .setSubText("请尽快收看")
+                            .setTicker("收到Christina发来的消息")
+                            .setWhen(System.currentTimeMillis())
+                            .setSmallIcon(R.drawable.wife2)
+                            .setLargeIcon(bitmap)
+                            .setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE)
+                            .setDefaults(Notification.DEFAULT_SOUND)
+                            .setAutoCancel(true);
+                    notification = builder.build();
+                    manager.notify(1, notification);
+                }
+            }
+
         }
+    }
+
+    public String getTime(){
+        String week;
+        Date date = new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        week = dateFormat.format(date);
+        return week;
     }
 
     public List<Map<String, String>> ShowList(){
@@ -100,10 +121,8 @@ public class CollectCenter extends AppCompatActivity {
                     System.out.println(cursor.getString(cursor.getColumnIndex("cover")));
                     ans.put("name_text", cursor.getString(cursor.getColumnIndex("name")));
                     System.out.println(cursor.getString(cursor.getColumnIndex("name")));
-
-                    notify_name = cursor.getString(cursor.getColumnIndex("name"));
-
-                    ans.put("favorite_text", cursor.getString(cursor.getColumnIndex("favorite")));
+                    ans.put("favourite_text", cursor.getString(cursor.getColumnIndex("favorite")));
+                    System.out.println(cursor.getString(cursor.getColumnIndex("favorite")));
                     ans.put("play_text", cursor.getString(cursor.getColumnIndex("play")));
                     ans.put("update_text", cursor.getString(cursor.getColumnIndex("date")));
                     tmp.add(ans);
